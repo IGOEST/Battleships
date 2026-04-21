@@ -1,0 +1,473 @@
+[gd_scene format=3 uid="uid://bq3huk364skd3"]
+
+[ext_resource type="PackedScene" uid="uid://4nf2tuec1c6" path="res://grid_square.tscn" id="1_0fbet"]
+[ext_resource type="Script" uid="uid://dg86hpwthmhhu" path="res://board.gd" id="1_psm7c"]
+
+[node name="Board" type="Control" unique_id=1620747405]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_psm7c")
+
+[node name="MainLayout" type="VBoxContainer" parent="." unique_id=1927000460]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LettersRow" type="HBoxContainer" parent="MainLayout" unique_id=671503813]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Space" type="Control" parent="MainLayout/LettersRow" unique_id=729935817]
+custom_minimum_size = Vector2(23, 0)
+layout_mode = 2
+
+[node name="a" type="Label" parent="MainLayout/LettersRow" unique_id=1682354304]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "A"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="b" type="Label" parent="MainLayout/LettersRow" unique_id=885782922]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "B"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="c" type="Label" parent="MainLayout/LettersRow" unique_id=1764120287]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "C"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="d" type="Label" parent="MainLayout/LettersRow" unique_id=1533566339]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "D"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="e" type="Label" parent="MainLayout/LettersRow" unique_id=958619486]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "E"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="f" type="Label" parent="MainLayout/LettersRow" unique_id=762339422]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "F"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="g" type="Label" parent="MainLayout/LettersRow" unique_id=245799534]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "G"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="h" type="Label" parent="MainLayout/LettersRow" unique_id=710557260]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "H"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="i" type="Label" parent="MainLayout/LettersRow" unique_id=1652477041]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "I"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="j" type="Label" parent="MainLayout/LettersRow" unique_id=427600765]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+text = "J"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BoardRow" type="HBoxContainer" parent="MainLayout" unique_id=404332652]
+layout_mode = 2
+
+[node name="NumbersColumn" type="VBoxContainer" parent="MainLayout/BoardRow" unique_id=1525540395]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="1" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=1776739136]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "1"
+vertical_alignment = 1
+
+[node name="2" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=1733692456]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "2"
+vertical_alignment = 1
+
+[node name="3" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=585446002]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "3"
+vertical_alignment = 1
+
+[node name="4" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=491321405]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "4"
+vertical_alignment = 1
+
+[node name="5" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=143368020]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "5"
+vertical_alignment = 1
+
+[node name="6" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=1244226744]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "6"
+vertical_alignment = 1
+
+[node name="7" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=469208002]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "7"
+vertical_alignment = 1
+
+[node name="8" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=1742319677]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "8"
+vertical_alignment = 1
+
+[node name="9" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=163972188]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "9"
+vertical_alignment = 1
+
+[node name="10" type="Label" parent="MainLayout/BoardRow/NumbersColumn" unique_id=543674502]
+layout_mode = 2
+text = "10"
+vertical_alignment = 1
+
+[node name="GridContainer" type="GridContainer" parent="MainLayout/BoardRow" unique_id=1124376761]
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 10
+
+[node name="gridSquare" parent="MainLayout/BoardRow/GridContainer" unique_id=1611741151 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare2" parent="MainLayout/BoardRow/GridContainer" unique_id=1417310196 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare3" parent="MainLayout/BoardRow/GridContainer" unique_id=1679269298 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare4" parent="MainLayout/BoardRow/GridContainer" unique_id=1520336425 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare5" parent="MainLayout/BoardRow/GridContainer" unique_id=1067164751 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare6" parent="MainLayout/BoardRow/GridContainer" unique_id=1284048076 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare7" parent="MainLayout/BoardRow/GridContainer" unique_id=1969951801 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare8" parent="MainLayout/BoardRow/GridContainer" unique_id=824568259 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare9" parent="MainLayout/BoardRow/GridContainer" unique_id=735992665 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare10" parent="MainLayout/BoardRow/GridContainer" unique_id=1437232288 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare11" parent="MainLayout/BoardRow/GridContainer" unique_id=1929434881 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare12" parent="MainLayout/BoardRow/GridContainer" unique_id=1241584846 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare13" parent="MainLayout/BoardRow/GridContainer" unique_id=494139987 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare14" parent="MainLayout/BoardRow/GridContainer" unique_id=582303062 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare15" parent="MainLayout/BoardRow/GridContainer" unique_id=1238497005 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare16" parent="MainLayout/BoardRow/GridContainer" unique_id=850328854 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare17" parent="MainLayout/BoardRow/GridContainer" unique_id=1723169805 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare18" parent="MainLayout/BoardRow/GridContainer" unique_id=1833298132 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare19" parent="MainLayout/BoardRow/GridContainer" unique_id=2107167327 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare20" parent="MainLayout/BoardRow/GridContainer" unique_id=473652316 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare21" parent="MainLayout/BoardRow/GridContainer" unique_id=647847192 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare22" parent="MainLayout/BoardRow/GridContainer" unique_id=2080774652 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare23" parent="MainLayout/BoardRow/GridContainer" unique_id=1121367285 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare24" parent="MainLayout/BoardRow/GridContainer" unique_id=1935519191 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare25" parent="MainLayout/BoardRow/GridContainer" unique_id=2091381522 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare26" parent="MainLayout/BoardRow/GridContainer" unique_id=2006254431 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare27" parent="MainLayout/BoardRow/GridContainer" unique_id=1613519553 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare28" parent="MainLayout/BoardRow/GridContainer" unique_id=244579935 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare29" parent="MainLayout/BoardRow/GridContainer" unique_id=1446304647 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare30" parent="MainLayout/BoardRow/GridContainer" unique_id=180575049 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare31" parent="MainLayout/BoardRow/GridContainer" unique_id=1081734605 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare32" parent="MainLayout/BoardRow/GridContainer" unique_id=1980034810 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare33" parent="MainLayout/BoardRow/GridContainer" unique_id=62505890 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare34" parent="MainLayout/BoardRow/GridContainer" unique_id=297453350 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare35" parent="MainLayout/BoardRow/GridContainer" unique_id=1934080557 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare36" parent="MainLayout/BoardRow/GridContainer" unique_id=939089569 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare37" parent="MainLayout/BoardRow/GridContainer" unique_id=964459877 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare38" parent="MainLayout/BoardRow/GridContainer" unique_id=1387016843 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare39" parent="MainLayout/BoardRow/GridContainer" unique_id=1733511789 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare40" parent="MainLayout/BoardRow/GridContainer" unique_id=249813581 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare41" parent="MainLayout/BoardRow/GridContainer" unique_id=298571426 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare42" parent="MainLayout/BoardRow/GridContainer" unique_id=607377293 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare43" parent="MainLayout/BoardRow/GridContainer" unique_id=2048853509 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare44" parent="MainLayout/BoardRow/GridContainer" unique_id=1386867094 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare45" parent="MainLayout/BoardRow/GridContainer" unique_id=156062211 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare46" parent="MainLayout/BoardRow/GridContainer" unique_id=1970888212 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare47" parent="MainLayout/BoardRow/GridContainer" unique_id=1762120210 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare48" parent="MainLayout/BoardRow/GridContainer" unique_id=1476699587 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare49" parent="MainLayout/BoardRow/GridContainer" unique_id=1325442064 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare50" parent="MainLayout/BoardRow/GridContainer" unique_id=191634767 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare51" parent="MainLayout/BoardRow/GridContainer" unique_id=699280212 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare52" parent="MainLayout/BoardRow/GridContainer" unique_id=1368624373 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare53" parent="MainLayout/BoardRow/GridContainer" unique_id=1363157438 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare54" parent="MainLayout/BoardRow/GridContainer" unique_id=1202925287 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare55" parent="MainLayout/BoardRow/GridContainer" unique_id=778528260 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare56" parent="MainLayout/BoardRow/GridContainer" unique_id=1013850796 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare57" parent="MainLayout/BoardRow/GridContainer" unique_id=1606075119 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare58" parent="MainLayout/BoardRow/GridContainer" unique_id=683059845 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare59" parent="MainLayout/BoardRow/GridContainer" unique_id=1446179417 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare60" parent="MainLayout/BoardRow/GridContainer" unique_id=1472308370 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare61" parent="MainLayout/BoardRow/GridContainer" unique_id=176268697 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare62" parent="MainLayout/BoardRow/GridContainer" unique_id=26749329 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare63" parent="MainLayout/BoardRow/GridContainer" unique_id=498610453 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare64" parent="MainLayout/BoardRow/GridContainer" unique_id=1100156559 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare65" parent="MainLayout/BoardRow/GridContainer" unique_id=1306696411 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare66" parent="MainLayout/BoardRow/GridContainer" unique_id=223984054 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare67" parent="MainLayout/BoardRow/GridContainer" unique_id=987874099 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare68" parent="MainLayout/BoardRow/GridContainer" unique_id=2091171897 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare69" parent="MainLayout/BoardRow/GridContainer" unique_id=1023439373 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare70" parent="MainLayout/BoardRow/GridContainer" unique_id=1042840400 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare71" parent="MainLayout/BoardRow/GridContainer" unique_id=1303783986 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare72" parent="MainLayout/BoardRow/GridContainer" unique_id=1797931360 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare73" parent="MainLayout/BoardRow/GridContainer" unique_id=168524596 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare74" parent="MainLayout/BoardRow/GridContainer" unique_id=350116395 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare75" parent="MainLayout/BoardRow/GridContainer" unique_id=1283277693 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare76" parent="MainLayout/BoardRow/GridContainer" unique_id=472913639 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare77" parent="MainLayout/BoardRow/GridContainer" unique_id=421075094 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare78" parent="MainLayout/BoardRow/GridContainer" unique_id=1487247567 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare79" parent="MainLayout/BoardRow/GridContainer" unique_id=347206251 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare80" parent="MainLayout/BoardRow/GridContainer" unique_id=1642327587 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare81" parent="MainLayout/BoardRow/GridContainer" unique_id=354579289 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare82" parent="MainLayout/BoardRow/GridContainer" unique_id=414602704 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare83" parent="MainLayout/BoardRow/GridContainer" unique_id=1287220716 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare84" parent="MainLayout/BoardRow/GridContainer" unique_id=909409197 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare85" parent="MainLayout/BoardRow/GridContainer" unique_id=539680023 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare86" parent="MainLayout/BoardRow/GridContainer" unique_id=2000377924 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare87" parent="MainLayout/BoardRow/GridContainer" unique_id=1085751490 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare88" parent="MainLayout/BoardRow/GridContainer" unique_id=673720904 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare89" parent="MainLayout/BoardRow/GridContainer" unique_id=732414238 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare90" parent="MainLayout/BoardRow/GridContainer" unique_id=274999608 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare91" parent="MainLayout/BoardRow/GridContainer" unique_id=856229641 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare92" parent="MainLayout/BoardRow/GridContainer" unique_id=722041910 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare93" parent="MainLayout/BoardRow/GridContainer" unique_id=14841018 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare94" parent="MainLayout/BoardRow/GridContainer" unique_id=256442811 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare95" parent="MainLayout/BoardRow/GridContainer" unique_id=538721192 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare96" parent="MainLayout/BoardRow/GridContainer" unique_id=222663941 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare97" parent="MainLayout/BoardRow/GridContainer" unique_id=383374957 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare98" parent="MainLayout/BoardRow/GridContainer" unique_id=85014187 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare99" parent="MainLayout/BoardRow/GridContainer" unique_id=23035339 instance=ExtResource("1_0fbet")]
+layout_mode = 2
+
+[node name="gridSquare100" parent="MainLayout/BoardRow/GridContainer" unique_id=1657951486 instance=ExtResource("1_0fbet")]
+layout_mode = 2

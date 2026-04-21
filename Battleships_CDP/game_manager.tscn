@@ -1,0 +1,323 @@
+[gd_scene format=3 uid="uid://bwi3f03vnopsn"]
+
+[ext_resource type="Script" uid="uid://c6j1gj5xr2jsj" path="res://game_manager.gd" id="1_70yv6"]
+[ext_resource type="PackedScene" uid="uid://bq3huk364skd3" path="res://board.tscn" id="2_smx3j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_smx3j"]
+bg_color = Color(0.47843137, 0.47843137, 0.47843137, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o2178"]
+bg_color = Color(0.47843137, 0.47843137, 0.47843137, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5upp"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.8, 0.8, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vk86k"]
+bg_color = Color(0.3764706, 0.50980395, 0.7137255, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shwjl"]
+bg_color = Color(0.3764706, 0.50980395, 0.7137255, 1)
+
+[node name="GameManager" type="Control" unique_id=1956849507]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_70yv6")
+
+[node name="background" type="ColorRect" parent="." unique_id=868518808]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.3764706, 0.50980395, 0.7137255, 1)
+
+[node name="StartScreen" type="CenterContainer" parent="." unique_id=802150697]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StartNodes" type="VBoxContainer" parent="StartScreen" unique_id=1621309293]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="title" type="Label" parent="StartScreen/StartNodes" unique_id=321433186]
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "BATTLESHIPS
+made by: Hanna Burdziej, Aleksandra Templin, Igor Estrop"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="start_button" type="Button" parent="StartScreen/StartNodes" unique_id=969390742]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_smx3j")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxFlat_smx3j")
+disabled = true
+text = "START"
+
+[node name="username_input" type="LineEdit" parent="StartScreen/StartNodes" unique_id=1910028910]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/selection_color = Color(1, 1, 1, 1)
+theme_override_colors/clear_button_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_o2178")
+placeholder_text = "ENTER USERNAME: "
+alignment = 1
+
+[node name="SetupPhase" type="Control" parent="." unique_id=229700927]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainLayout" type="HBoxContainer" parent="SetupPhase" unique_id=808813754]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BoardContainer" type="CenterContainer" parent="SetupPhase/MainLayout" unique_id=694186520]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Board" parent="SetupPhase/MainLayout/BoardContainer" unique_id=1620747405 instance=ExtResource("2_smx3j")]
+layout_mode = 2
+
+[node name="SidebarPanel" type="PanelContainer" parent="SetupPhase/MainLayout" unique_id=826781889]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_d5upp")
+
+[node name="SidebarStack" type="VBoxContainer" parent="SetupPhase/MainLayout/SidebarPanel" unique_id=1754695156]
+custom_minimum_size = Vector2(300, 100)
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="ship_label" type="Label" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=1539001379]
+layout_mode = 2
+
+[node name="ShipPreviewGrid" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=257568842]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 3
+columns = 4
+
+[node name="ColorRect" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ShipPreviewGrid" unique_id=1662065981]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ShipPreviewGrid" unique_id=1950949956]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ShipPreviewGrid" unique_id=335410599]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ShipPreviewGrid" unique_id=962466223]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="rotate_button" type="Button" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=609612407]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_vk86k")
+text = "ROTATE SHIP"
+
+[node name="ready_button" type="Button" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=43229383]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_shwjl")
+text = "START"
+
+[node name="ListOfShips" type="VBoxContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=739092429]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ship_label" type="Label" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=1848751890]
+layout_mode = 2
+text = "List of all ships to be placed:"
+
+[node name="ship4" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=1487278790]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 0
+columns = 4
+
+[node name="ColorRect" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship4" unique_id=889663817]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship4" unique_id=1707854180]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship4" unique_id=159608726]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship4" unique_id=1213264061]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ship3" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=835738382]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="ColorRect" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=1000664708]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=880244824]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=849225174]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=1707079773]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=380064685]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship3" unique_id=169487565]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ship2" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=15272330]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="ColorRect" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=268330538]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=1371007474]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=1706320803]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=942746068]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=773571849]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship2" unique_id=1712308192]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ship1" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=204671231]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 10
+
+[node name="ColorRect" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship1" unique_id=1071398114]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship1" unique_id=1264357357]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship1" unique_id=1006922987]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips/ship1" unique_id=671231319]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+
+[node name="WaitingScreen" type="Control" parent="." unique_id=85120290]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="WaitingScreen" unique_id=1593250235]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="WaitingScreen/CenterContainer" unique_id=989646415]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "WAITING FOR ANOTHER PLAYER..."
+
+[connection signal="pressed" from="StartScreen/StartNodes/start_button" to="." method="_on_start_button_pressed"]
+[connection signal="text_changed" from="StartScreen/StartNodes/username_input" to="." method="_on_username_input_text_changed"]
+[connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/rotate_button" to="." method="_on_rotate_button_pressed"]
+
+[editable path="SetupPhase/MainLayout/BoardContainer/Board"]
