@@ -13,7 +13,6 @@ func process_message(client, message: Dictionary) -> Array:
  
 			print("GAME: FIRE at ", x, ", ", y)
  
-			# Just for now always HIT (to test the communication)
 			responses.append({"client": client, "packet": Msg.make_fire_result(x, y, "hit")})
 			print("GAME: Sending action result: FIRE_RESULT hit at [%d,%d]" % [x, y])
  

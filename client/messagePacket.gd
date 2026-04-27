@@ -12,6 +12,7 @@ enum MsgType {
 	YOUR_BOARD_HIT = 7,
 	SHIP_SUNK = 8,
 	GAME_OVER = 9,
+	REJECT = 10
 }
 
 #BOARD
@@ -91,6 +92,14 @@ static func make_game_over(winner_id: int) -> Dictionary:
 	return {
 		"type": MsgType.GAME_OVER,
 		"winner_id": winner_id,
+	}
+
+# REJECT
+# disconnect players
+static func make_reject(reason: String) -> Dictionary:
+	return {
+		"type": MsgType.REJECT,
+		"reason": reason,
 	}
 
 static func writeMsg(packet: Dictionary) -> String:
