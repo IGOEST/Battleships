@@ -165,9 +165,10 @@ func _game_logic_thread():
 		mutex.unlock()
 		
 		var client = packet["client"]
+		var pid = packet["player_id"]
 		var message = packet["packet"]
 		
-		var responses = game_logic.process_message(client, message)
+		var responses = game_logic.process_message(client, message, pid)
 		
 		mutex.lock()
 		for r in responses:

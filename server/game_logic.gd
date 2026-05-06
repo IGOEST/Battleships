@@ -5,10 +5,9 @@ const Msg = preload("res://messagePacket.gd")
 var server_grids = {}	# {player_id: {Vector2: ship_id}}
 var player_boards = {}
 
-func process_message(client, message: Dictionary) -> Array:
+func process_message(client, message: Dictionary, pid: int) -> Array:
 	var responses := []
 	var msg_type: int = message.get("type")
-	var pid = message.get("player_id", -1)
 	
 	match msg_type:
 		Msg.MsgType.FIRE:
@@ -40,7 +39,7 @@ func process_message(client, message: Dictionary) -> Array:
 		
 		Msg.MsgType.BOARD:
 			player_boards[pid] = "READY"
-			print("SERVER:Player %D is ready" % pid)
+			print("SERVER:Player %d is ready" % pid)
 			
 			if player_boards.size() == 2:
 				responses.append({"client": client, "packet": Msg.make_game_start(1)})
