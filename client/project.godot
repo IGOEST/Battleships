@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="client"
-run/main_scene="uid://bnwtlkrthsdp5"
+config/name="client_CDP"
+run/main_scene="uid://bwi3f03vnopsn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 

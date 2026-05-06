@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="server"
+config/name="server_CDP"
 run/main_scene="uid://ke0nad2dibj8"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"

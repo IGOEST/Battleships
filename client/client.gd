@@ -134,7 +134,13 @@ func handle_server_message(packet: Dictionary):
  
 		Msg.MsgType.WAIT_FOR_PLAYER:
 			print("CLIENT: Waiting for opponent...")
- 
+ 		
+		Msg.MsgType.PLACE_CONFIRM:
+			get_parent().handle_place_confirm(packet)
+			
+		Msg.MsgType.PLACE_REJECT:
+			print("CLIENT: Server rejected placement (overlap or out of bounds)")
+			
 		Msg.MsgType.GAME_START:
 			print("CLIENT: Game started. First turn: player %d" % packet["first_turn"])
  

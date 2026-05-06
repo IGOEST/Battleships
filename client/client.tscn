@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://bnwtlkrthsdp5"]
-
-[ext_resource type="Script" uid="uid://c155nvin87pf0" path="res://client.gd" id="1_lgb4g"]
-
-[node name="Client" type="Node2D" unique_id=1172344992]
-script = ExtResource("1_lgb4g")

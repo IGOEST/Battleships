@@ -1,0 +1,11 @@
+63f7b34db8d8cdea90c76aacccf841ec
+::res://::1778068782
+battle_phase.tscn::PackedScene::8559129116182888863::1778066189::0::1::::<><><>0<>0<><>::uid://bq3huk364skd3::::res://board.tscn
+board.gd::GDScript::7650415128833621454::1778066189::0::1::::<>Control<><>0<>0<><>::
+board.tscn::PackedScene::3567706063778752234::1778066189::0::1::::<><><>0<>0<><>::uid://4nf2tuec1c6::::res://grid_square.tscn<>uid://dg86hpwthmhhu::::res://board.gd
+client.gd::GDScript::1945750756417767823::1778066189::0::1::::<>Node<><>0<>0<><>::
+game_manager.gd::GDScript::6968864796650189913::1778066189::0::1::::<>Control<><>0<>0<><>::
+game_manager.tscn::PackedScene::3948800627839638925::1778066189::0::1::::<><><>0<>0<><>::uid://c6j1gj5xr2jsj::::res://game_manager.gd<>uid://bq3huk364skd3::::res://board.tscn<>uid://2ysh3wwuniw2::::res://client.gd
+grid_square.gd::GDScript::3268769311937744915::1778066189::0::1::::<>Button<><>0<>0<><>::
+grid_square.tscn::PackedScene::60666653139122395::1778066189::0::1::::<><><>0<>0<><>::uid://bmtofg4j8kvlj::::res://grid_square.gd
+messagePacket.gd::GDScript::3328051108179901299::1778066189::0::1::::<>RefCounted<><>0<>0<><>::
