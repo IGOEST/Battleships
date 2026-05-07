@@ -6,7 +6,8 @@ const Msg = preload("res://messagePacket.gd")
 @onready var username_input = $StartScreen/StartNodes/username_input
 @onready var start_button = $StartScreen/StartNodes/start_button
 
-@onready var waiting_screen = $WaitingScreen
+@onready var waiting_screen_player = $WaitingScreenPlayer
+@onready var waiting_screen_server = $WaitingScreenServer
 
 @onready var setup_phase = $SetupPhase
 @onready var grid_container = $SetupPhase/MainLayout/BoardContainer/Board/MainLayout/BoardRow/GridContainer
@@ -14,24 +15,34 @@ const Msg = preload("res://messagePacket.gd")
 @onready var rotate_button = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/rotate_button
 @onready var ready_button = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/ready_button
 
+@onready var battle_screen = $BattleScreen
+@onready var player_name_label = $BattleScreen/MarginContainer/Layout/TopBar/PlayerName
+@onready var opponent_name_label = $BattleScreen/MarginContainer/Layout/TopBar/OpponentName
+@onready var battle_grid_player = $BattleScreen/MarginContainer/Layout/MainArea/Left/PlayerBoard/Board/MainLayout/BoardRow/GridContainer
+
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
 var ships_to_place = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
 var current_ship_index = 0
 var is_horizontal: bool = true
+var my_player_name: String = ""		# for storing player's name
 
 func _ready():
-	# when the game starts, only the start screen is visible
-	start_screen.show()
-	waiting_screen.hide()
+	# at the beginning we are checking if server is connected, so showing waiting screen
+	waiting_screen_server.show()
+	start_screen.hide()
+	waiting_screen_player.hide()
 	setup_phase.hide()
-	
-	# start button begins as disabled, waits for username input
-	start_button.disabled = true
+	battle_screen.hide()
 	
 	_initialize_grid_coordinates()
 	update_placement_label()
 	update_ship_preview()
+	
+func connection_established():
+	waiting_screen_server.hide()
+	start_screen.show()
+	start_button.disabled = true
 	
 func _initialize_grid_coordinates():
 	var buttons = grid_container.get_children()
@@ -50,10 +61,8 @@ func _on_username_input_text_changed(new_text: String):
 
 # start button pressed = showing waiting screen
 func _on_start_button_pressed():
+	my_player_name = username_input.text
 	start_screen.hide()
-	waiting_screen.show()
-	await get_tree().create_timer(2.0).timeout # placeholder
-	waiting_screen.hide()
 	setup_phase.show()
 	
 	
@@ -83,7 +92,7 @@ func update_ship_preview():
 		else:
 			preview_rects[i].hide()
 
-# PLACEMENT LOGIC
+# PLACEMENT UI LOGIC
 func _on_square_pressed(btn):
 	if current_ship_index >= ships_to_place.size():
 		return # = all ships places
@@ -129,5 +138,25 @@ func _on_ready_button_pressed():
 	network.out_mutex.unlock()
 	
 	setup_phase.hide()
-	waiting_screen.show()
+	waiting_screen_player.show()
 	print("CLIENT: Told the server that we are ready, waiting for opponent")
+	
+# BATTLE UI LOGIC
+func start_battle_phase(packet: Dictionary):
+	waiting_screen_player.hide()
+	battle_screen.show()
+	
+	player_name_label.text = "Player: " + my_player_name
+	opponent_name_label.text = "Opponent: Ready" # placeholder
+
+	# copying ships to the battle screen
+	_sync_ships_to_battle_grid()
+
+func _sync_ships_to_battle_grid():
+	var battle_buttons = battle_grid_player.get_children()
+
+	for coord in grid_data:
+		var index = int(coord.y * 10 + coord.x)
+		var ship_id = grid_data[coord]
+		
+		battle_buttons[index].mark_as_ship(ship_id)

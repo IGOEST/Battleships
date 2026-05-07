@@ -27,8 +27,9 @@ var running_mutex := Mutex.new()
 var my_player_id := -1
 
 
-
 func _ready():
+	get_parent().get_node("StartScreen").hide()
+	get_parent().get_node("WaitingScreenServer").show()
 	connect_to_server()
 	
 func connect_to_server():
@@ -43,6 +44,7 @@ func connect_to_server():
  
 	network_thread.start(Callable(self, "_network_thread"))
  
+
 # main thread acting as intended UI/input thread
 func _process(delta):
 	# get messages from network thread
@@ -57,7 +59,7 @@ func _process(delta):
 	if not connected and client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
 		connected = true
 		print("CLIENT: Connected to server!")
-		get_tree().create_timer(1.0).timeout.connect(func(): send_fire(3, 5))
+		get_parent().connection_established()
 		return
 	
 	if not connected:
@@ -83,7 +85,6 @@ func _network_thread() -> void:
 		if status == StreamPeerTCP.STATUS_CONNECTING:
 			OS.delay_msec(10)
 			continue
- 
  
 		# Flush out queue
 		out_mutex.lock()
@@ -143,7 +144,8 @@ func handle_server_message(packet: Dictionary):
 			
 		Msg.MsgType.GAME_START:
 			print("CLIENT: Game started. First turn: player %d" % packet["first_turn"])
- 
+			get_parent().call_deferred("start_battle_phase", packet) 
+
 		Msg.MsgType.FIRE_RESULT:
 			print("CLIENT: Fire result at [%d,%d] -> %s" % [packet["x"], packet["y"], packet["outcome"]])
  

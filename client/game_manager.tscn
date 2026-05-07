@@ -31,6 +31,13 @@ bg_color = Color(0.3764706, 0.50980395, 0.7137255, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_shwjl"]
 bg_color = Color(0.3764706, 0.50980395, 0.7137255, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eakoi"]
+bg_color = Color(0.5372549, 0.43137255, 0.9411765, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+
 [node name="GameManager" type="Control" unique_id=1956849507]
 layout_mode = 3
 anchors_preset = 15
@@ -48,6 +55,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.3764706, 0.50980395, 0.7137255, 1)
+
+[node name="WaitingScreenPlayer" type="Control" parent="." unique_id=85120290]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="WaitingScreenPlayer" unique_id=1593250235]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="WaitingScreenPlayer/CenterContainer" unique_id=989646415]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "WAITING FOR ANOTHER PLAYER..."
+
+[node name="WaitingScreenServer" type="Control" parent="." unique_id=408238926]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="WaitingScreenServer" unique_id=1809998403]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="WaitingScreenServer/CenterContainer" unique_id=1531049205]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "WAITING FOR CONNECTION..."
 
 [node name="StartScreen" type="CenterContainer" parent="." unique_id=802150697]
 visible = false
@@ -90,6 +141,7 @@ placeholder_text = "ENTER USERNAME: "
 alignment = 1
 
 [node name="SetupPhase" type="Control" parent="." unique_id=229700927]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -295,30 +347,97 @@ custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 color = Color(0.5372549, 0.43137255, 0.9411765, 1)
 
-[node name="WaitingScreen" type="Control" parent="." unique_id=85120290]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="CenterContainer" type="CenterContainer" parent="WaitingScreen" unique_id=1593250235]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Label" type="Label" parent="WaitingScreen/CenterContainer" unique_id=989646415]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "WAITING FOR ANOTHER PLAYER..."
-
 [node name="NetworkClient" type="Node" parent="." unique_id=1523837039]
 script = ExtResource("3_o2178")
+
+[node name="BattleScreen" type="Control" parent="." unique_id=1790726221]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BattleScreen" unique_id=614264961]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Layout" type="VBoxContainer" parent="BattleScreen/MarginContainer" unique_id=934378220]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TopBar" type="HBoxContainer" parent="BattleScreen/MarginContainer/Layout" unique_id=710110568]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="PlayerName" type="Label" parent="BattleScreen/MarginContainer/Layout/TopBar" unique_id=2008996040]
+layout_mode = 2
+text = "Player: [name]"
+
+[node name="TurnIndicator" type="Label" parent="BattleScreen/MarginContainer/Layout/TopBar" unique_id=1840941510]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_eakoi")
+text = "YOUR TURN"
+horizontal_alignment = 1
+
+[node name="OpponentName" type="Label" parent="BattleScreen/MarginContainer/Layout/TopBar" unique_id=1939879432]
+layout_mode = 2
+text = "Opponent: [name]"
+horizontal_alignment = 2
+
+[node name="MainArea" type="HBoxContainer" parent="BattleScreen/MarginContainer/Layout" unique_id=184206654]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="Left" type="VBoxContainer" parent="BattleScreen/MarginContainer/Layout/MainArea" unique_id=499454589]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="YourShipsLabel" type="Label" parent="BattleScreen/MarginContainer/Layout/MainArea/Left" unique_id=2071177218]
+layout_mode = 2
+text = "YOUR SHIPS"
+horizontal_alignment = 1
+
+[node name="PlayerBoard" type="GridContainer" parent="BattleScreen/MarginContainer/Layout/MainArea/Left" unique_id=1177046176]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+
+[node name="Board" parent="BattleScreen/MarginContainer/Layout/MainArea/Left/PlayerBoard" unique_id=221623262 instance=ExtResource("2_smx3j")]
+layout_mode = 2
+
+[node name="Right" type="VBoxContainer" parent="BattleScreen/MarginContainer/Layout/MainArea" unique_id=65141012]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OpponentsShipsLabel" type="Label" parent="BattleScreen/MarginContainer/Layout/MainArea/Right" unique_id=1338680659]
+layout_mode = 2
+text = "OPPONENT'S SHIPS"
+horizontal_alignment = 1
+
+[node name="OpponentsBoard" type="GridContainer" parent="BattleScreen/MarginContainer/Layout/MainArea/Right" unique_id=1497531719]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+
+[node name="Board" parent="BattleScreen/MarginContainer/Layout/MainArea/Right/OpponentsBoard" unique_id=1352668857 instance=ExtResource("2_smx3j")]
+layout_mode = 2
+
+[node name="BottomText" type="Label" parent="BattleScreen/MarginContainer/Layout" unique_id=2027886219]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+horizontal_alignment = 1
 
 [connection signal="pressed" from="StartScreen/StartNodes/start_button" to="." method="_on_start_button_pressed"]
 [connection signal="text_changed" from="StartScreen/StartNodes/username_input" to="." method="_on_username_input_text_changed"]
@@ -326,3 +445,5 @@ script = ExtResource("3_o2178")
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ready_button" to="." method="_on_ready_button_pressed"]
 
 [editable path="SetupPhase/MainLayout/BoardContainer/Board"]
+[editable path="BattleScreen/MarginContainer/Layout/MainArea/Left/PlayerBoard/Board"]
+[editable path="BattleScreen/MarginContainer/Layout/MainArea/Right/OpponentsBoard/Board"]
