@@ -4,6 +4,7 @@ const Msg = preload("res://messagePacket.gd")
 
 var server_grids = {}	# {player_id: {Vector2: ship_id}}
 var player_boards = {}
+var player_names = {}	# {player_id: "name"}
 
 func process_message(client, message: Dictionary, pid: int) -> Array:
 	var responses := []
@@ -14,11 +15,20 @@ func process_message(client, message: Dictionary, pid: int) -> Array:
 			var x = message.get("x", -1)
 			var y = message.get("y", -1)
  
-			print("GAME: FIRE at ", x, ", ", y)
- 
-			# Just for now always HIT (to test the communication)
-			responses.append({"client": client, "packet": Msg.make_fire_result(x, y, "hit")})
-			print("GAME: Sending action result: FIRE_RESULT hit at [%d,%d]" % [x, y])
+			var opponent_id = 2 if pid == 1 else 1
+			var outcome = "miss"
+			
+			if server_grids.has(opponent_id) and server_grids[opponent_id].has(Vector2(x,y)):
+				outcome = "hit"
+				print("SERVER: Hit at ", Vector2(x,y))
+			else:
+				print("SERVER: Miss at ", Vector2(x,y))
+				
+			# to the player who fired
+			responses.append({"client": client, "packet": Msg.make_fire_result(x, y, outcome, -1)})
+			# to the player who was shot
+			responses.append({"target_id": opponent_id, "packet": Msg.make_your_board_hit(x, y, outcome, -1)})
+			print("SERVER: Sending action result")
  
 		Msg.MsgType.PLACE_REQUEST:
 			var coords = message.get("coords", [])
@@ -39,10 +49,16 @@ func process_message(client, message: Dictionary, pid: int) -> Array:
 		
 		Msg.MsgType.BOARD:
 			player_boards[pid] = "READY"
+			player_names[pid] = message.get("player_name", "unknown")
 			print("SERVER:Player %d is ready" % pid)
 			
 			if player_boards.size() == 2:
-				responses.append({"client": client, "packet": Msg.make_game_start(1)})
+				responses.append({"target": "all", "packet": {
+					"type": Msg.MsgType.GAME_START,
+					"first_turn": 1,
+					"p1_name": player_names[1],
+					"p2_name": player_names[2] }
+				})
 				
 	return responses
 	
@@ -62,7 +78,8 @@ func is_placement_valid(pid, coords_array):
 
 func save_to_server_grid(pid, coords_array, ship_id):
 	for c_raw in coords_array:
-		server_grids[pid][Vector2(c_raw[0], c_raw[1])] = ship_id
+		var vec = Vector2(int(c_raw[0]), int(c_raw[1]))
+		server_grids[pid][vec] = ship_id
 		
 func clear_player_data(pid):
 	if server_grids.has(pid):

@@ -148,9 +148,11 @@ func handle_server_message(packet: Dictionary):
 
 		Msg.MsgType.FIRE_RESULT:
 			print("CLIENT: Fire result at [%d,%d] -> %s" % [packet["x"], packet["y"], packet["outcome"]])
+			get_parent().handle_fire_result(packet)
  
 		Msg.MsgType.YOUR_BOARD_HIT:
 			print("CLIENT: Opponent hit your board at [%d,%d] -> %s" % [packet["x"], packet["y"], packet["outcome"]])
+			get_parent().handle_incoming_hit(packet)
  
 		Msg.MsgType.SHIP_SUNK:
 			print("CLIENT: Ship %d of player %d sunk!" % [packet["ship_id"], packet["owner_id"]])

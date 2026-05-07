@@ -19,6 +19,7 @@ const Msg = preload("res://messagePacket.gd")
 @onready var player_name_label = $BattleScreen/MarginContainer/Layout/TopBar/PlayerName
 @onready var opponent_name_label = $BattleScreen/MarginContainer/Layout/TopBar/OpponentName
 @onready var battle_grid_player = $BattleScreen/MarginContainer/Layout/MainArea/Left/PlayerBoard/Board/MainLayout/BoardRow/GridContainer
+@onready var battle_grid_opponent = $BattleScreen/MarginContainer/Layout/MainArea/Right/OpponentsBoard/Board/MainLayout/BoardRow/GridContainer
 
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
@@ -26,6 +27,7 @@ var ships_to_place = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
 var current_ship_index = 0
 var is_horizontal: bool = true
 var my_player_name: String = ""		# for storing player's name
+var opponent_name: String = ""
 
 func _ready():
 	# at the beginning we are checking if server is connected, so showing waiting screen
@@ -133,7 +135,8 @@ func _on_ready_button_pressed():
 	
 	network.out_mutex.lock()
 	network.out_queue.append({
-		"type": Msg.MsgType.BOARD
+		"type": Msg.MsgType.BOARD,
+		"player_name": my_player_name
 	})
 	network.out_mutex.unlock()
 	
@@ -146,11 +149,16 @@ func start_battle_phase(packet: Dictionary):
 	waiting_screen_player.hide()
 	battle_screen.show()
 	
+	if network.my_player_id == 1:
+		opponent_name = packet.get("p2_name")
+	else:
+		opponent_name = packet.get("p1_name")
+	
 	player_name_label.text = "Player: " + my_player_name
-	opponent_name_label.text = "Opponent: Ready" # placeholder
+	opponent_name_label.text = "Opponent: " + opponent_name
 
-	# copying ships to the battle screen
-	_sync_ships_to_battle_grid()
+	_initialize_enemy_grid()
+	_sync_ships_to_battle_grid()	# copying ships to the battle screen
 
 func _sync_ships_to_battle_grid():
 	var battle_buttons = battle_grid_player.get_children()
@@ -160,3 +168,39 @@ func _sync_ships_to_battle_grid():
 		var ship_id = grid_data[coord]
 		
 		battle_buttons[index].mark_as_ship(ship_id)
+
+func _initialize_enemy_grid():
+	var buttons = battle_grid_opponent.get_children()
+	
+	for i in range(buttons.size()):
+		var x = i % 10
+		var y = i / 10
+		var btn = buttons[i]
+		btn.set_coordinate(Vector2(x, y))
+		btn.pressed.connect(_on_enemy_square_pressed.bind(btn))		# connecting to a function for firing
+
+func _on_enemy_square_pressed(btn):
+	var pos = btn.coordinate
+	print("CLIENT: Firing at ", pos)
+	network.send_fire(int(pos.x), int(pos.y))
+	btn.disabled = true		# can't shot the same spot twice
+	
+func handle_fire_result(packet):
+	var x = packet["x"]
+	var y = packet["y"]
+	var outcome = packet["outcome"]
+	var btn = battle_grid_opponent.get_child(y * 10 + x)
+	
+	if outcome == "hit":
+		btn.modulate = Color.RED
+	else:
+		btn.modulate = Color.DARK_GRAY
+
+func handle_incoming_hit(packet):
+	var x = packet["x"]
+	var y = packet["y"]
+	var outcome = packet["outcome"]
+	var btn = battle_grid_player.get_child(y * 10 + x)
+	
+	if outcome == "hit":
+		btn.text = "X"

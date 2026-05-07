@@ -172,7 +172,15 @@ func _game_logic_thread():
 		
 		mutex.lock()
 		for r in responses:
-			outgoing_queue.append(r)
+			if r.has("target") and r["target"] == "all":
+				for c in clients:
+					outgoing_queue.append({"client": c, "packet": r["packet"]})
+			elif r.has("target_id"):
+				for c in _player_ids:
+					if _player_ids[c] == r["target_id"]:
+						outgoing_queue.append({"client": c, "packet": r["packet"]})
+			else:		# send only to specific client
+				outgoing_queue.append(r)
 			print("SERVER: Received action result: ", r["packet"])
 		mutex.unlock()
 
