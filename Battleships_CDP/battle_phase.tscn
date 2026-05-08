@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dt7duut05ked0"]
+
+[ext_resource type="PackedScene" uid="uid://bq3huk364skd3" path="res://board.tscn" id="1_wcxio"]
+
+[node name="BattlePhase" type="HBoxContainer" unique_id=2129112293]
+anchors_preset = -1
+offset_top = 29.0
+offset_right = 380.0
+offset_bottom = 40.0
+theme_override_constants/separation = 380
+
+[node name="Board" parent="." unique_id=1620747405 instance=ExtResource("1_wcxio")]
+layout_mode = 2
+
+[node name="Board2" parent="." unique_id=728737160 instance=ExtResource("1_wcxio")]
+layout_mode = 2

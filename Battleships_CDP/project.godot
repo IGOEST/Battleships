@@ -10,8 +10,7 @@ config_version=5
 
 [application]
 
-config/name="client_CDP"
-run/main_scene="uid://bwi3f03vnopsn"
+config/name="Battleships_CDP"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 

@@ -1,0 +1,8 @@
+# Ignore .godot in any subfolder
+**/.godot/
+.godot/
+
+# Ignore other junk
+*.tmp
+*.import
+export_presets.cfg
