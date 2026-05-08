@@ -9,6 +9,11 @@ const Msg = preload("res://messagePacket.gd")
 @onready var waiting_screen_player = $WaitingScreenPlayer
 @onready var waiting_screen_server = $WaitingScreenServer
 
+@onready var playerWin_screen = $PlayerWin
+@onready var playerLose_screen = $PlayerLose
+
+@onready var disconnected_screen = $ServerDisconnected
+
 @onready var setup_phase = $SetupPhase
 @onready var grid_container = $SetupPhase/MainLayout/BoardContainer/Board/MainLayout/BoardRow/GridContainer
 @onready var ship_label = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/ship_label
@@ -22,30 +27,38 @@ const Msg = preload("res://messagePacket.gd")
 @onready var battle_grid_opponent = $BattleScreen/MarginContainer/Layout/MainArea/Right/OpponentsBoard/Board/MainLayout/BoardRow/GridContainer
 @onready var turn_label = $BattleScreen/MarginContainer/Layout/TopBar/TurnIndicator
 
+@onready var ships_list = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips
+
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
-var ships_to_place = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
+var ships_to_place = [4, 3, 2, 1] #[4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
 var current_ship_index = 0
 var is_horizontal: bool = true
 var my_player_name: String = ""		# for storing player's name
 var opponent_name: String = ""
 var my_turn: bool = false
 
+enum ScreenState {
+	WAITING_SERVER,
+	START,
+	SETUP,
+	WAITING_PLAYER,
+	BATTLE,
+	DISCONNECTED
+}
+
+var current_screen: ScreenState
+
 func _ready():
 	# at the beginning we are checking if server is connected, so showing waiting screen
-	waiting_screen_server.show()
-	start_screen.hide()
-	waiting_screen_player.hide()
-	setup_phase.hide()
-	battle_screen.hide()
-	
+	show_screen(ScreenState.WAITING_SERVER)
+	draw_ship_list()
 	_initialize_grid_coordinates()
 	update_placement_label()
 	update_ship_preview()
 	
 func connection_established():
-	waiting_screen_server.hide()
-	start_screen.show()
+	show_screen(ScreenState.START)
 	start_button.disabled = true
 	
 func _initialize_grid_coordinates():
@@ -57,7 +70,6 @@ func _initialize_grid_coordinates():
 		btn.set_coordinate(Vector2(x,y))
 		btn.pressed.connect(_on_square_pressed.bind(btn))
 
-
 # UI LOGIC
 # if there is text, start button enabled
 func _on_username_input_text_changed(new_text: String):
@@ -66,9 +78,7 @@ func _on_username_input_text_changed(new_text: String):
 # start button pressed = showing waiting screen
 func _on_start_button_pressed():
 	my_player_name = username_input.text
-	start_screen.hide()
-	setup_phase.show()
-	
+	show_screen(ScreenState.SETUP)
 	
 func _on_rotate_button_pressed():
 	is_horizontal = !is_horizontal
@@ -126,6 +136,7 @@ func handle_place_confirm(packet):
 		grid_data[Vector2(c[0], c[1])] = ship_id
 		
 	current_ship_index += 1
+	draw_ship_list()
 	update_placement_label()
 	update_ship_preview()
 
@@ -142,8 +153,7 @@ func _on_ready_button_pressed():
 	})
 	network.out_mutex.unlock()
 	
-	setup_phase.hide()
-	waiting_screen_player.show()
+	show_screen(ScreenState.WAITING_PLAYER)
 	print("CLIENT: Told the server that we are ready, waiting for opponent")
 	
 func _on_auto_place_button_pressed():
@@ -178,8 +188,7 @@ func _on_auto_place_button_pressed():
 	
 # BATTLE UI LOGIC
 func start_battle_phase(packet: Dictionary):
-	waiting_screen_player.hide()
-	battle_screen.show()
+	show_screen(ScreenState.BATTLE)
 	
 	if network.my_player_id == 1:
 		opponent_name = packet.get("p2_name")
@@ -229,8 +238,8 @@ func _on_enemy_square_pressed(btn):
 	print("CLIENT: Firing at ", pos)
 	network.send_fire(int(pos.x), int(pos.y))
 	btn.disabled = true		# can't shot the same spot twice
-	my_turn = false
-	update_turn_ui()
+	#my_turn = false
+	#update_turn_ui()
 	
 func handle_fire_result(packet):
 	var x = int(packet["x"])
@@ -245,8 +254,8 @@ func handle_fire_result(packet):
 		btn.modulate = Color.WHITE
 		btn.text = "0"
 	
-	my_turn = false
-	update_turn_ui()
+	#my_turn = false
+	#update_turn_ui()
 
 func handle_incoming_hit(packet):
 	var x = packet["x"]
@@ -255,5 +264,112 @@ func handle_incoming_hit(packet):
 	var btn = battle_grid_player.get_child(y * 10 + x)
 	btn.text = "X"
 	
-	my_turn = true
+	#my_turn = true
+	#update_turn_ui()
+
+func handle_ship_sunk(packet):
+	var owner_id = packet["owner_id"]
+	var cells = packet["cells"]
+	
+	var target_grid
+	
+	# if opponent ship sunk -> enemy board
+	if owner_id != network.my_player_id:
+		target_grid = battle_grid_opponent
+	else:
+		target_grid = battle_grid_player
+	
+	for c in cells:
+		var x = int(c[0])
+		var y = int(c[1])
+		
+		var btn = target_grid.get_child(y * 10 + x)
+		btn.modulate = Color.DARK_RED
+		btn.text = "S"
+
+func handle_game_over(packet):
+	var winner_id = packet["winner_id"]
+	
+	# disable enemy grid
+	for btn in battle_grid_opponent.get_children():
+		btn.disabled = true
+	
+	if winner_id == network.my_player_id:
+		turn_label.text = "YOU WIN!"
+		playerWin_screen.show()
+		battle_screen.hide()
+	else:
+		turn_label.text = "YOU LOSE!"
+		playerLose_screen.show()
+		battle_screen.hide()
+
+func handle_turn_change(packet):
+	var next_turn = packet["next_turn"]
+	my_turn = (next_turn == network.my_player_id)
 	update_turn_ui()
+
+func handle_server_disconnect():
+	show_screen(ScreenState.DISCONNECTED)
+
+func show_screen(state: ScreenState):
+	current_screen = state
+	
+	# hide everything first
+	start_screen.hide()
+	waiting_screen_player.hide()
+	waiting_screen_server.hide()
+	setup_phase.hide()
+	battle_screen.hide()
+	disconnected_screen.hide()
+
+	# show requested screen
+	match state:
+		ScreenState.WAITING_SERVER:
+			waiting_screen_server.show()
+
+		ScreenState.START:
+			start_screen.show()
+
+		ScreenState.SETUP:
+			setup_phase.show()
+
+		ScreenState.WAITING_PLAYER:
+			waiting_screen_player.show()
+
+		ScreenState.BATTLE:
+			battle_screen.show()
+
+		ScreenState.DISCONNECTED:
+			disconnected_screen.show()
+
+func draw_ship_list():
+	# clear old UI
+	for child in ships_list.get_children():
+		child.queue_free()
+
+	# create UI rows
+	for i in range(ships_to_place.size()):
+		var ship_size = ships_to_place[i]
+
+		var row = HBoxContainer.new()
+
+		# ship label
+		var label = Label.new()
+		label.text = "Ship %d (size %d)" % [i + 1, ship_size]
+		label.custom_minimum_size.x = 120
+
+		row.add_child(label)
+
+		# ship preview squares
+		for j in range(ship_size):
+			var rect = ColorRect.new()
+			rect.custom_minimum_size = Vector2(20, 20)
+			rect.color = Color(0.53, 0.43, 0.94, 1.00)
+
+			row.add_child(rect)
+
+		# mark placed ships
+		if i < current_ship_index:
+			row.modulate = Color(0.5, 0.5, 0.5)
+
+		ships_list.add_child(row)

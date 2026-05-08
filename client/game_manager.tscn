@@ -323,6 +323,7 @@ layout_mode = 2
 text = "List of all ships to be placed:"
 
 [node name="ship4" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=1487278790]
+visible = false
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 3
@@ -350,6 +351,7 @@ layout_mode = 2
 color = Color(0.5372549, 0.43137255, 0.9411765, 1)
 
 [node name="ship3" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=835738382]
+visible = false
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 3
@@ -387,6 +389,7 @@ layout_mode = 2
 color = Color(0.5372549, 0.43137255, 0.9411765, 1)
 
 [node name="ship2" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=15272330]
+visible = false
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 3
@@ -424,6 +427,7 @@ layout_mode = 2
 color = Color(0.5372549, 0.43137255, 0.9411765, 1)
 
 [node name="ship1" type="GridContainer" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips" unique_id=204671231]
+visible = false
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 theme_override_constants/h_separation = 3

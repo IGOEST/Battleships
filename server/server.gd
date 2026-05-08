@@ -60,33 +60,6 @@ func _process(delta: float) -> void:
 		send_packet(target_client, packet)
 		mutex.lock()
 	mutex.unlock()
-		
-	#for i in range(clients.size()):
-		#var client: StreamPeerTCP = clients[i]
-		#client.poll()
-			#
-		#if client.get_status() != StreamPeerTCP.STATUS_CONNECTED:
-			#print("Client disconnected!")
-			#client_buffers.erase(client)
-			#clients.remove_at(i)
-			#continue
-			
-		#if client.get_available_bytes() > 0:
-			#var bytes_available = client.get_available_bytes()
-			#var data = client.get_utf8_string(bytes_available)
-			#print("Raw data received(", bytes_available, " bytes): '", data, "'")
-			#client_buffers[client] += data
-		#
-		#while "\n" in client_buffers[client]:
-			#var newLine_pos = client_buffers[client].find("\n")
-			#var message = client_buffers[client].substr(0, newLine_pos)
-			#client_buffers[client] = client_buffers[client].substr(newLine_pos + 1)
-			#
-			#print("Message: ", message, " (length: ", message.length(), ")")
-			#if message.length() > 0:
-				#print("Processing message ", message)
-				#handle_client_message(client, message)
-
 
 func _client_thread(client):
 	var pid: int = _player_ids[client]
@@ -126,11 +99,12 @@ func _client_thread(client):
 		OS.delay_msec(10)
  
 	print("SERVER: Client thread exit")
-	mutex.lock()
-	client_buffers.erase(client)
-	clients.erase(client)
-	_player_ids.erase(client)
-	mutex.unlock()
+	#mutex.lock()
+	#client_buffers.erase(client)
+	#clients.erase(client)
+	#_player_ids.erase(client)
+	#mutex.unlock()
+	clear_on_client_disconnect(client, _player_ids.get(client, -1))
 
 
 func handle_client_message(client: StreamPeerTCP, message: String) -> void:
@@ -185,29 +159,44 @@ func _game_logic_thread():
 		mutex.unlock()
 
 
-func call_server_function(client: StreamPeerTCP, data: String):
-	print("SERVER: Server function called with data: ", data)
-	var result = "Server processed: " + data.to_upper()
-	send_to_client(client, "FUNCTION_RESULT " + result)
+#func call_server_function(client: StreamPeerTCP, data: String):
+	#print("SERVER: Server function called with data: ", data)
+	#var result = "Server processed: " + data.to_upper()
+	#send_to_client(client, "FUNCTION_RESULT " + result)
 
 
-func send_info_to_client(client: StreamPeerTCP):
-	var info = {
-		"server_time": Time.get_ticks_msec(),
-		"connected_clients": clients.size(),
-		"status": "running"
-	}
+#func send_info_to_client(client: StreamPeerTCP):
+	#var info = {
+		#"server_time": Time.get_ticks_msec(),
+		#"connected_clients": clients.size(),
+		#"status": "running"
+	#}
+	#
+	#var json_string = JSON.stringify(info)
+	#send_to_client(client, "INFO " + json_string)
+
+
+#func send_to_client(client: StreamPeerTCP, message: String):
+	#var full_message = message + "\n"
+	#print("SERVER: Sending to client: ", full_message)
+	#var result = client.put_data(full_message.to_utf8_buffer())
+	#print("SERVER: Sent result: ", result)
+
+func clear_on_client_disconnect(client: StreamPeerTCP, pid: int) -> void:
+	mutex.lock()
+	client_buffers.erase(client)
+	clients.erase(client)
+	mutex.unlock()
+
+	game_logic.clear_player_data(pid)
+
+	mutex.lock()
+	_player_ids.erase(client)
+	mutex.unlock()
 	
-	var json_string = JSON.stringify(info)
-	send_to_client(client, "INFO " + json_string)
-
-
-func send_to_client(client: StreamPeerTCP, message: String):
-	var full_message = message + "\n"
-	print("SERVER: Sending to client: ", full_message)
-	var result = client.put_data(full_message.to_utf8_buffer())
-	print("SERVER: Sent result: ", result)
-
+	_next_player_id -= 1
+	
+	print("Cleared data for client: ", pid)
 
 func send_packet(client: StreamPeerTCP, packet: Dictionary) -> void:
 	var message := Msg.writeMsg(packet)
@@ -222,4 +211,5 @@ func _exit_tree() -> void:
 		client.disconnect_from_host()
 	for t in threads:
 		t.wait_to_finish()
+	game_thread.wait_to_finish()
 	server.stop()

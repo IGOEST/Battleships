@@ -15,6 +15,7 @@ enum MsgType {
 	PLACE_REQUEST = 10,
 	PLACE_CONFIRM = 11,
 	PLACE_REJECT = 12,
+	TURN_CHANGE = 13
 }
 
 #BOARD
@@ -94,6 +95,12 @@ static func make_game_over(winner_id: int) -> Dictionary:
 	return {
 		"type": MsgType.GAME_OVER,
 		"winner_id": winner_id,
+	}
+	
+static func make_turn_change(next_turn: int) -> Dictionary:
+	return {
+		"type": MsgType.TURN_CHANGE,
+		"next_turn": next_turn,
 	}
 
 static func writeMsg(packet: Dictionary) -> String:
