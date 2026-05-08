@@ -13,4 +13,4 @@ func mark_as_ship(id: int):
 
 func mark_as_water():
 	ship_id = -1
-	modulate = Color("89cff0") # resetting if necessaryy
+	modulate = Color("89cff0") # resetting if necessary

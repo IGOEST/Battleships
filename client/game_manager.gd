@@ -20,6 +20,7 @@ const Msg = preload("res://messagePacket.gd")
 @onready var opponent_name_label = $BattleScreen/MarginContainer/Layout/TopBar/OpponentName
 @onready var battle_grid_player = $BattleScreen/MarginContainer/Layout/MainArea/Left/PlayerBoard/Board/MainLayout/BoardRow/GridContainer
 @onready var battle_grid_opponent = $BattleScreen/MarginContainer/Layout/MainArea/Right/OpponentsBoard/Board/MainLayout/BoardRow/GridContainer
+@onready var turn_label = $BattleScreen/MarginContainer/Layout/TopBar/TurnIndicator
 
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
@@ -28,6 +29,7 @@ var current_ship_index = 0
 var is_horizontal: bool = true
 var my_player_name: String = ""		# for storing player's name
 var opponent_name: String = ""
+var my_turn: bool = false
 
 func _ready():
 	# at the beginning we are checking if server is connected, so showing waiting screen
@@ -144,6 +146,36 @@ func _on_ready_button_pressed():
 	waiting_screen_player.show()
 	print("CLIENT: Told the server that we are ready, waiting for opponent")
 	
+func _on_auto_place_button_pressed():
+	# list of prepared ship placement
+	var test_layout = [
+		[[0,0], [1,0], [2,0], [3,0]],
+		[[0,2], [1,2], [2,2]],
+		[[4,2], [5,2], [6,2]],
+		[[0,4], [1,4]],
+		[[3,4], [4,4]],
+		[[6,4], [7,4]],
+		[[0,6]],
+		[[2,6]],
+		[[4,6]],
+		[[6,6]]
+	]
+
+	# clear everything
+	current_ship_index = 0
+	
+	for ship_coords in test_layout:
+		network.out_mutex.lock()
+		network.out_queue.append({
+			"type": Msg.MsgType.PLACE_REQUEST,
+			"coords": ship_coords,
+			"ship_id": current_ship_index
+		})
+		network.out_mutex.unlock()
+		
+		# waiting for server if it needs some time to process all ships in short amount of time
+		await get_tree().create_timer(0.1).timeout
+	
 # BATTLE UI LOGIC
 func start_battle_phase(packet: Dictionary):
 	waiting_screen_player.hide()
@@ -157,8 +189,17 @@ func start_battle_phase(packet: Dictionary):
 	player_name_label.text = "Player: " + my_player_name
 	opponent_name_label.text = "Opponent: " + opponent_name
 
+	my_turn = (packet.get("first_turn") == network.my_player_id)
+	update_turn_ui()
+	
 	_initialize_enemy_grid()
 	_sync_ships_to_battle_grid()	# copying ships to the battle screen
+
+func update_turn_ui():
+	if my_turn:
+		turn_label.text = "YOUR TURN"
+	else:
+		turn_label.text = "WAITING FOR OPPONENT'S MOVE..."
 
 func _sync_ships_to_battle_grid():
 	var battle_buttons = battle_grid_player.get_children()
@@ -180,27 +221,39 @@ func _initialize_enemy_grid():
 		btn.pressed.connect(_on_enemy_square_pressed.bind(btn))		# connecting to a function for firing
 
 func _on_enemy_square_pressed(btn):
+	if not my_turn:
+		print("CLIENT: Wait for your turn")
+		return
+	
 	var pos = btn.coordinate
 	print("CLIENT: Firing at ", pos)
 	network.send_fire(int(pos.x), int(pos.y))
 	btn.disabled = true		# can't shot the same spot twice
+	my_turn = false
+	update_turn_ui()
 	
 func handle_fire_result(packet):
-	var x = packet["x"]
-	var y = packet["y"]
+	var x = int(packet["x"])
+	var y = int(packet["y"])
 	var outcome = packet["outcome"]
 	var btn = battle_grid_opponent.get_child(y * 10 + x)
 	
 	if outcome == "hit":
 		btn.modulate = Color.RED
+		btn.text = "X"
 	else:
-		btn.modulate = Color.DARK_GRAY
+		btn.modulate = Color.WHITE
+		btn.text = "0"
+	
+	my_turn = false
+	update_turn_ui()
 
 func handle_incoming_hit(packet):
 	var x = packet["x"]
 	var y = packet["y"]
 	var outcome = packet["outcome"]
 	var btn = battle_grid_player.get_child(y * 10 + x)
+	btn.text = "X"
 	
-	if outcome == "hit":
-		btn.text = "X"
+	my_turn = true
+	update_turn_ui()

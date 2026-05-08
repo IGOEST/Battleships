@@ -25,6 +25,9 @@ content_margin_right = 20.0
 content_margin_bottom = 20.0
 bg_color = Color(0.8, 0.8, 1, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8jrwq"]
+bg_color = Color(0.37696934, 0.5104568, 0.7146141, 1)
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vk86k"]
 bg_color = Color(0.3764706, 0.50980395, 0.7137255, 1)
 
@@ -47,6 +50,9 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_70yv6")
 
+[node name="NetworkClient" type="Node" parent="." unique_id=1523837039]
+script = ExtResource("3_o2178")
+
 [node name="background" type="ColorRect" parent="." unique_id=868518808]
 layout_mode = 1
 anchors_preset = 15
@@ -55,6 +61,98 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.3764706, 0.50980395, 0.7137255, 1)
+
+[node name="PlayerDisconnected" type="Control" parent="." unique_id=1882987514]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PlayerDisconnected" unique_id=235806720]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PlayerDisconnected/CenterContainer" unique_id=1100283708]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "PLAYER DISCONNECTED - GAME OVER :("
+
+[node name="ServerDisconnected" type="Control" parent="." unique_id=1962812501]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="ServerDisconnected" unique_id=1170918805]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="ServerDisconnected/CenterContainer" unique_id=985871850]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "SERVER DISCONNECTED - GAME OVER :("
+
+[node name="PlayerWin" type="Control" parent="." unique_id=703662506]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PlayerWin" unique_id=381740207]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PlayerWin/CenterContainer" unique_id=1423595925]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "YOU WON, CONGRATULATIONS!
+DISCONNECTING..."
+horizontal_alignment = 1
+
+[node name="PlayerLose" type="Control" parent="." unique_id=3338999]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="PlayerLose" unique_id=1787936388]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PlayerLose/CenterContainer" unique_id=1515193754]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "YOU LOST, GOOD LUCK NEXT TIME!
+DISCONNECTING..."
+horizontal_alignment = 1
 
 [node name="WaitingScreenPlayer" type="Control" parent="." unique_id=85120290]
 visible = false
@@ -141,7 +239,6 @@ placeholder_text = "ENTER USERNAME: "
 alignment = 1
 
 [node name="SetupPhase" type="Control" parent="." unique_id=229700927]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -172,6 +269,11 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_d5upp")
 custom_minimum_size = Vector2(300, 100)
 layout_mode = 2
 theme_override_constants/separation = 20
+
+[node name="AutoPlaceButton" type="Button" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=1963491627]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_8jrwq")
+text = "PLACE SHIPS (FOR TESTING)"
 
 [node name="ship_label" type="Label" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=1539001379]
 layout_mode = 2
@@ -347,10 +449,8 @@ custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 color = Color(0.5372549, 0.43137255, 0.9411765, 1)
 
-[node name="NetworkClient" type="Node" parent="." unique_id=1523837039]
-script = ExtResource("3_o2178")
-
 [node name="BattleScreen" type="Control" parent="." unique_id=1790726221]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -441,6 +541,7 @@ horizontal_alignment = 1
 
 [connection signal="pressed" from="StartScreen/StartNodes/start_button" to="." method="_on_start_button_pressed"]
 [connection signal="text_changed" from="StartScreen/StartNodes/username_input" to="." method="_on_username_input_text_changed"]
+[connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/AutoPlaceButton" to="." method="_on_auto_place_button_pressed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/rotate_button" to="." method="_on_rotate_button_pressed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ready_button" to="." method="_on_ready_button_pressed"]
 
