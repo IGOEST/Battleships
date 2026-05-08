@@ -8,6 +8,7 @@ var client := StreamPeerTCP.new()
 var connected := false
 var message_buffer := ""
 
+
 var network_thread := Thread.new()
 
 # for communication from network thread to UI/input thread
@@ -25,7 +26,10 @@ var running_mutex := Mutex.new()
 # assigned when the server sends ASSIGN_ID
 var my_player_id := -1
 
+
 func _ready():
+	get_parent().get_node("StartScreen").hide()
+	get_parent().get_node("WaitingScreenServer").show()
 	connect_to_server()
 	
 func connect_to_server():
@@ -40,6 +44,7 @@ func connect_to_server():
  
 	network_thread.start(Callable(self, "_network_thread"))
  
+
 # main thread acting as intended UI/input thread
 func _process(delta):
 	# get messages from network thread
@@ -54,7 +59,7 @@ func _process(delta):
 	if not connected and client.get_status() == StreamPeerTCP.STATUS_CONNECTED:
 		connected = true
 		print("CLIENT: Connected to server!")
-		get_tree().create_timer(1.0).timeout.connect(func(): send_fire(3, 5))
+		get_parent().connection_established()
 		return
 	
 	if not connected:
@@ -130,27 +135,67 @@ func handle_server_message(packet: Dictionary):
  
 		Msg.MsgType.WAIT_FOR_PLAYER:
 			print("CLIENT: Waiting for opponent...")
- 
+ 		
+		Msg.MsgType.PLACE_CONFIRM:
+			get_parent().handle_place_confirm(packet)
+			
+		Msg.MsgType.PLACE_REJECT:
+			print("CLIENT: Server rejected placement (overlap or out of bounds)")
+			
 		Msg.MsgType.GAME_START:
 			print("CLIENT: Game started. First turn: player %d" % packet["first_turn"])
- 
+			get_parent().call_deferred("start_battle_phase", packet) 
+
 		Msg.MsgType.FIRE_RESULT:
 			print("CLIENT: Fire result at [%d,%d] -> %s" % [packet["x"], packet["y"], packet["outcome"]])
+			get_parent().handle_fire_result(packet)
  
 		Msg.MsgType.YOUR_BOARD_HIT:
 			print("CLIENT: Opponent hit your board at [%d,%d] -> %s" % [packet["x"], packet["y"], packet["outcome"]])
+			get_parent().handle_incoming_hit(packet)
  
 		Msg.MsgType.SHIP_SUNK:
 			print("CLIENT: Ship %d of player %d sunk!" % [packet["ship_id"], packet["owner_id"]])
  
 		Msg.MsgType.GAME_OVER:
 			print("CLIENT: Game over! Winner: player %d" % packet["winner_id"])
-
-		Msg.MsgType.REJECT:
-			print("CLIENT: Rejected from server: ", packet["reason"])
-
+ 
 		_:
 			print("CLIENT: Unhandled packet type: ", msg_type)
+
+
+func send_call_function(data: String):
+	if not connected:
+		print("CLIENT: Not connected to server")
+		return
+	
+	var message = "CALL_FUNCTION " + data + "\n"
+	print("CLIENT: Sending to server (", message.length(), " bytes): '", message, "'")
+	var result = client.put_data(message.to_utf8_buffer())
+	print("CLIENT: Sent result: ", result)
+
+
+func request_server_info():
+	if not connected:
+		print("CLIENT: Not connected to server")
+		return
+	
+	var message = "REQUEST_INFO\n"
+	print("CLIENT: Sending to server (", message.length(), " bytes): '", message, "'")
+	var result = client.put_data(message.to_utf8_buffer())
+	print("CLIENT: Sent result: ", result)
+
+
+func on_function_result(result: String):
+	print("CLIENT: Processing function result: ", result)
+
+
+func on_server_info(info: Dictionary):
+	print("CLIENT: Processing servr info:")
+	print(" CLIENT: Server time: ", info.get("server_time", 0))
+	print(" CLIENT: Connected clients: ", info.get("connected_clients", 0))
+	print(" CLIENT: Status: ", info.get("status", "unknown"))
+
 
 func send_fire(x: int, y: int):
 	if not connected:
@@ -160,6 +205,7 @@ func send_fire(x: int, y: int):
 	out_mutex.unlock()
 	print("CLIENT: Queued FIRE at [%d,%d]" % [x, y])
 
+
 func send_board(ships: Array):
 	if not connected:
 		return
@@ -168,11 +214,13 @@ func send_board(ships: Array):
 	out_mutex.unlock()
 	print("CLIENT: Queued BOARD_SUBMIT (%d ships)" % ships.size())
 
+
 func is_running() -> bool:
 	running_mutex.lock()
 	var r := running
 	running_mutex.unlock()
 	return r
+
 
 func _exit_tree() -> void:
 	running_mutex.lock()

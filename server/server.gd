@@ -8,8 +8,6 @@ var client_buffers = {}
 var mutex := Mutex.new()
 var threads = []
 
-var turn_player_id := -1
-
 const Msg = preload("res://messagePacket.gd")
 var game_logic := preload("res://game_logic.gd").new()
 
@@ -35,20 +33,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if server.is_connection_available():
 		var client := server.take_connection()
-		
-		if clients.size() >= max_clients:
-			print("SERVER: Rejecting client, server full")
-
-			send_packet(client, Msg.make_reject("Server is full"))
-
-			client.disconnect_from_host()
-			return
-		
 		clients.append(client)
-		
-		mutex.lock()
 		client_buffers[client] = ""
-		mutex.unlock()
 		
 		# assign player id
 		var pid := _next_player_id
@@ -56,21 +42,9 @@ func _process(delta: float) -> void:
 		_player_ids[client] = pid
 		print("SERVER: Client connected as player %d. Total clients: %d" % [pid, clients.size()])
 		send_packet(client, Msg.make_assign_id(pid))
-
-		# Only one player -> wait
-		if clients.size() == 1:
+		
+		if clients.size() < max_clients:
 			send_packet(client, Msg.make_wait_for_player())
-		# Second player joins -> start game
-		elif clients.size() == 2:
-			var p1 = clients[0]
-			var p2 = clients[1]
-
-			turn_player_id = _player_ids[p1]
-
-			send_packet(p1, Msg.make_game_start(turn_player_id))
-			send_packet(p2, Msg.make_game_start(turn_player_id))
-
-			print("SERVER: Game started between %d and %d" % [_player_ids[p1], _player_ids[p2]])
 
 		
 		var t = Thread.new()
@@ -86,6 +60,33 @@ func _process(delta: float) -> void:
 		send_packet(target_client, packet)
 		mutex.lock()
 	mutex.unlock()
+		
+	#for i in range(clients.size()):
+		#var client: StreamPeerTCP = clients[i]
+		#client.poll()
+			#
+		#if client.get_status() != StreamPeerTCP.STATUS_CONNECTED:
+			#print("Client disconnected!")
+			#client_buffers.erase(client)
+			#clients.remove_at(i)
+			#continue
+			
+		#if client.get_available_bytes() > 0:
+			#var bytes_available = client.get_available_bytes()
+			#var data = client.get_utf8_string(bytes_available)
+			#print("Raw data received(", bytes_available, " bytes): '", data, "'")
+			#client_buffers[client] += data
+		#
+		#while "\n" in client_buffers[client]:
+			#var newLine_pos = client_buffers[client].find("\n")
+			#var message = client_buffers[client].substr(0, newLine_pos)
+			#client_buffers[client] = client_buffers[client].substr(newLine_pos + 1)
+			#
+			#print("Message: ", message, " (length: ", message.length(), ")")
+			#if message.length() > 0:
+				#print("Processing message ", message)
+				#handle_client_message(client, message)
+
 
 func _client_thread(client):
 	var pid: int = _player_ids[client]
@@ -164,15 +165,49 @@ func _game_logic_thread():
 		mutex.unlock()
 		
 		var client = packet["client"]
+		var pid = packet["player_id"]
 		var message = packet["packet"]
 		
-		var responses = game_logic.process_message(client, message)
+		var responses = game_logic.process_message(client, message, pid)
 		
 		mutex.lock()
 		for r in responses:
-			outgoing_queue.append(r)
+			if r.has("target") and r["target"] == "all":
+				for c in clients:
+					outgoing_queue.append({"client": c, "packet": r["packet"]})
+			elif r.has("target_id"):
+				for c in _player_ids:
+					if _player_ids[c] == r["target_id"]:
+						outgoing_queue.append({"client": c, "packet": r["packet"]})
+			else:		# send only to specific client
+				outgoing_queue.append(r)
 			print("SERVER: Received action result: ", r["packet"])
 		mutex.unlock()
+
+
+func call_server_function(client: StreamPeerTCP, data: String):
+	print("SERVER: Server function called with data: ", data)
+	var result = "Server processed: " + data.to_upper()
+	send_to_client(client, "FUNCTION_RESULT " + result)
+
+
+func send_info_to_client(client: StreamPeerTCP):
+	var info = {
+		"server_time": Time.get_ticks_msec(),
+		"connected_clients": clients.size(),
+		"status": "running"
+	}
+	
+	var json_string = JSON.stringify(info)
+	send_to_client(client, "INFO " + json_string)
+
+
+func send_to_client(client: StreamPeerTCP, message: String):
+	var full_message = message + "\n"
+	print("SERVER: Sending to client: ", full_message)
+	var result = client.put_data(full_message.to_utf8_buffer())
+	print("SERVER: Sent result: ", result)
+
 
 func send_packet(client: StreamPeerTCP, packet: Dictionary) -> void:
 	var message := Msg.writeMsg(packet)
@@ -181,10 +216,10 @@ func send_packet(client: StreamPeerTCP, packet: Dictionary) -> void:
 	if err != OK:
 		push_warning("SERVER: error %d" % err)
  
+
 func _exit_tree() -> void:
 	for client in clients:
 		client.disconnect_from_host()
 	for t in threads:
 		t.wait_to_finish()
-	game_thread.wait_to_finish()
 	server.stop()
