@@ -62,6 +62,30 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.3764706, 0.50980395, 0.7137255, 1)
 
+[node name="ServerFull" type="Control" parent="." unique_id=126555930]
+visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CenterContainer" type="CenterContainer" parent="ServerFull" unique_id=888570921]
+layout_mode = 0
+offset_right = 1152.0
+offset_bottom = 648.0
+
+[node name="Label" type="Label" parent="ServerFull/CenterContainer" unique_id=197028657]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "CANNOT CONNECT - SERVER IS FULL"
+
+[node name="ExitButton" type="Button" parent="ServerFull" unique_id=371568937]
+layout_mode = 0
+offset_left = 476.0
+offset_top = 441.0
+offset_right = 676.0
+offset_bottom = 491.0
+text = "Exit Game"
+
 [node name="PlayerDisconnected" type="Control" parent="." unique_id=1882987514]
 visible = false
 layout_mode = 1
@@ -84,6 +108,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "PLAYER DISCONNECTED - GAME OVER :("
 
+[node name="ExitButton" type="Button" parent="PlayerDisconnected" unique_id=1624076101]
+layout_mode = 0
+offset_left = 476.0
+offset_top = 441.0
+offset_right = 676.0
+offset_bottom = 491.0
+text = "Exit Game"
+
 [node name="ServerDisconnected" type="Control" parent="." unique_id=1962812501]
 visible = false
 layout_mode = 1
@@ -105,6 +137,14 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "SERVER DISCONNECTED - GAME OVER :("
+
+[node name="ExitButton" type="Button" parent="ServerDisconnected" unique_id=1133112215]
+layout_mode = 0
+offset_left = 476.0
+offset_top = 441.0
+offset_right = 676.0
+offset_bottom = 491.0
+text = "Exit Game"
 
 [node name="PlayerWin" type="Control" parent="." unique_id=703662506]
 visible = false
@@ -130,6 +170,14 @@ text = "YOU WON, CONGRATULATIONS!
 DISCONNECTING..."
 horizontal_alignment = 1
 
+[node name="ExitButton" type="Button" parent="PlayerWin" unique_id=293096365]
+layout_mode = 0
+offset_left = 476.0
+offset_top = 441.0
+offset_right = 676.0
+offset_bottom = 491.0
+text = "Exit Game"
+
 [node name="PlayerLose" type="Control" parent="." unique_id=3338999]
 visible = false
 layout_mode = 1
@@ -153,6 +201,14 @@ theme_override_font_sizes/font_size = 40
 text = "YOU LOST, GOOD LUCK NEXT TIME!
 DISCONNECTING..."
 horizontal_alignment = 1
+
+[node name="ExitButton" type="Button" parent="PlayerLose" unique_id=1192137367]
+layout_mode = 0
+offset_left = 476.0
+offset_top = 441.0
+offset_right = 676.0
+offset_bottom = 491.0
+text = "Exit Game"
 
 [node name="WaitingScreenPlayer" type="Control" parent="." unique_id=85120290]
 visible = false
@@ -239,6 +295,7 @@ placeholder_text = "ENTER USERNAME: "
 alignment = 1
 
 [node name="SetupPhase" type="Control" parent="." unique_id=229700927]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -271,6 +328,7 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="AutoPlaceButton" type="Button" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=1963491627]
+visible = false
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_8jrwq")
 text = "PLACE SHIPS (FOR TESTING)"
@@ -543,6 +601,11 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 horizontal_alignment = 1
 
+[connection signal="pressed" from="ServerFull/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="PlayerDisconnected/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="ServerDisconnected/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="PlayerWin/ExitButton" to="." method="_on_exit_button_pressed"]
+[connection signal="pressed" from="PlayerLose/ExitButton" to="." method="_on_exit_button_pressed"]
 [connection signal="pressed" from="StartScreen/StartNodes/start_button" to="." method="_on_start_button_pressed"]
 [connection signal="text_changed" from="StartScreen/StartNodes/username_input" to="." method="_on_username_input_text_changed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/AutoPlaceButton" to="." method="_on_auto_place_button_pressed"]

@@ -8,7 +8,6 @@ var client := StreamPeerTCP.new()
 var connected := false
 var message_buffer := ""
 
-
 var network_thread := Thread.new()
 
 # for communication from network thread to UI/input thread
@@ -40,7 +39,11 @@ func connect_to_server():
 	running_mutex.lock()
 	running = true
 	running_mutex.unlock()
- 
+	
+	if network_thread.is_started():
+		network_thread.wait_to_finish()
+
+	network_thread = Thread.new()
 	network_thread.start(Callable(self, "_network_thread"))
  
 # main thread acting as intended UI/input thread
@@ -160,9 +163,17 @@ func handle_server_message(packet: Dictionary):
 		Msg.MsgType.TURN_CHANGE:
 			get_parent().handle_turn_change(packet)
 
+		Msg.MsgType.PLAYER_DISCONNECT:
+			print("CLIENT: Opponent disconnected")
+			get_parent().handle_opponent_disconnected()
+
 		Msg.MsgType.GAME_OVER:
 			print("CLIENT: Game over! Winner: player %d" % packet["winner_id"])
 			get_parent().handle_game_over(packet)
+
+		Msg.MsgType.SERVER_FULL:
+			print("CLIENT: Server is full")
+			get_parent().handle_server_full()
  
 		_:
 			print("CLIENT: Unhandled packet type: ", msg_type)

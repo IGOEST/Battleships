@@ -191,3 +191,13 @@ func clear_player_data(pid):
 		player_boards.erase(pid)
 	if player_names.has(pid):
 		player_names.erase(pid)
+
+func reset_game():
+	server_grids.clear()
+	ships_data.clear()
+	ship_cells.clear()
+	player_boards.clear()
+	player_names.clear()
+	game_started = false
+	game_over = false
+	current_turn = 1

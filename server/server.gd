@@ -33,6 +33,16 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if server.is_connection_available():
 		var client := server.take_connection()
+		
+		# reject client if server full
+		if clients.size() >= max_clients:
+			print("SERVER: Rejecting client, server full")
+
+			send_packet(client, Msg.make_server_full())
+
+			client.disconnect_from_host()
+			return
+		
 		clients.append(client)
 		client_buffers[client] = ""
 		
@@ -99,6 +109,18 @@ func _client_thread(client):
 		OS.delay_msec(10)
  
 	print("SERVER: Client thread exit")
+	var disconnected_pid = pid
+	var remaining_clients = []
+	mutex.lock()
+	for c in clients:
+		if c != client:
+			remaining_clients.append(c)
+	mutex.unlock()
+	for remaining_client in remaining_clients:
+		send_packet(
+			remaining_client,
+			Msg.make_player_disconnect()
+		)
 	#mutex.lock()
 	#client_buffers.erase(client)
 	#clients.erase(client)

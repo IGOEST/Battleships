@@ -12,7 +12,10 @@ const Msg = preload("res://messagePacket.gd")
 @onready var playerWin_screen = $PlayerWin
 @onready var playerLose_screen = $PlayerLose
 
-@onready var disconnected_screen = $ServerDisconnected
+@onready var server_disconnected = $ServerDisconnected
+@onready var player_disconnected = $PlayerDisconnected
+
+@onready var server_full_screen = $ServerFull
 
 @onready var setup_phase = $SetupPhase
 @onready var grid_container = $SetupPhase/MainLayout/BoardContainer/Board/MainLayout/BoardRow/GridContainer
@@ -29,9 +32,11 @@ const Msg = preload("res://messagePacket.gd")
 
 @onready var ships_list = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/ListOfShips
 
+@onready var disconnect_exit_button = $PlayerDisconnected/ExitButton
+
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
-var ships_to_place = [4, 3, 2, 1] #[4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
+var ships_to_place = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
 var current_ship_index = 0
 var is_horizontal: bool = true
 var my_player_name: String = ""		# for storing player's name
@@ -44,7 +49,11 @@ enum ScreenState {
 	SETUP,
 	WAITING_PLAYER,
 	BATTLE,
-	DISCONNECTED
+	SERVER_DISCONNECTED,
+	PLAYER_DISCONNECTED,
+	PLAYER_WIN,
+	PLAYER_LOSE,
+	SERVER_FULL
 }
 
 var current_screen: ScreenState
@@ -156,35 +165,35 @@ func _on_ready_button_pressed():
 	show_screen(ScreenState.WAITING_PLAYER)
 	print("CLIENT: Told the server that we are ready, waiting for opponent")
 	
-func _on_auto_place_button_pressed():
-	# list of prepared ship placement
-	var test_layout = [
-		[[0,0], [1,0], [2,0], [3,0]],
-		[[0,2], [1,2], [2,2]],
-		[[4,2], [5,2], [6,2]],
-		[[0,4], [1,4]],
-		[[3,4], [4,4]],
-		[[6,4], [7,4]],
-		[[0,6]],
-		[[2,6]],
-		[[4,6]],
-		[[6,6]]
-	]
-
-	# clear everything
-	current_ship_index = 0
-	
-	for ship_coords in test_layout:
-		network.out_mutex.lock()
-		network.out_queue.append({
-			"type": Msg.MsgType.PLACE_REQUEST,
-			"coords": ship_coords,
-			"ship_id": current_ship_index
-		})
-		network.out_mutex.unlock()
-		
-		# waiting for server if it needs some time to process all ships in short amount of time
-		await get_tree().create_timer(0.1).timeout
+#func _on_auto_place_button_pressed():
+	## list of prepared ship placement
+	#var test_layout = [
+		#[[0,0], [1,0], [2,0], [3,0]],
+		#[[0,2], [1,2], [2,2]],
+		#[[4,2], [5,2], [6,2]],
+		#[[0,4], [1,4]],
+		#[[3,4], [4,4]],
+		#[[6,4], [7,4]],
+		#[[0,6]],
+		#[[2,6]],
+		#[[4,6]],
+		#[[6,6]]
+	#]
+#
+	## clear everything
+	#current_ship_index = 0
+	#
+	#for ship_coords in test_layout:
+		#network.out_mutex.lock()
+		#network.out_queue.append({
+			#"type": Msg.MsgType.PLACE_REQUEST,
+			#"coords": ship_coords,
+			#"ship_id": current_ship_index
+		#})
+		#network.out_mutex.unlock()
+		#
+		## waiting for server if it needs some time to process all ships in short amount of time
+		#await get_tree().create_timer(0.1).timeout
 	
 # BATTLE UI LOGIC
 func start_battle_phase(packet: Dictionary):
@@ -248,7 +257,7 @@ func handle_fire_result(packet):
 	var btn = battle_grid_opponent.get_child(y * 10 + x)
 	
 	if outcome == "hit":
-		btn.modulate = Color.RED
+		btn.modulate = Color.DARK_RED
 		btn.text = "X"
 	else:
 		btn.modulate = Color.WHITE
@@ -284,7 +293,7 @@ func handle_ship_sunk(packet):
 		var y = int(c[1])
 		
 		var btn = target_grid.get_child(y * 10 + x)
-		btn.modulate = Color.DARK_RED
+		btn.mark_as_sunk()
 		btn.text = "S"
 
 func handle_game_over(packet):
@@ -296,12 +305,10 @@ func handle_game_over(packet):
 	
 	if winner_id == network.my_player_id:
 		turn_label.text = "YOU WIN!"
-		playerWin_screen.show()
-		battle_screen.hide()
+		show_screen(ScreenState.PLAYER_WIN)
 	else:
 		turn_label.text = "YOU LOSE!"
-		playerLose_screen.show()
-		battle_screen.hide()
+		show_screen(ScreenState.PLAYER_LOSE)
 
 func handle_turn_change(packet):
 	var next_turn = packet["next_turn"]
@@ -309,7 +316,13 @@ func handle_turn_change(packet):
 	update_turn_ui()
 
 func handle_server_disconnect():
-	show_screen(ScreenState.DISCONNECTED)
+	show_screen(ScreenState.SERVER_DISCONNECTED)
+
+func handle_opponent_disconnected():
+	show_screen(ScreenState.PLAYER_DISCONNECTED)
+
+func handle_server_full():
+	show_screen(ScreenState.SERVER_FULL)
 
 func show_screen(state: ScreenState):
 	current_screen = state
@@ -320,7 +333,11 @@ func show_screen(state: ScreenState):
 	waiting_screen_server.hide()
 	setup_phase.hide()
 	battle_screen.hide()
-	disconnected_screen.hide()
+	server_disconnected.hide()
+	player_disconnected.hide()
+	playerWin_screen.hide()
+	playerLose_screen.hide()
+	server_full_screen.hide()
 
 	# show requested screen
 	match state:
@@ -339,8 +356,20 @@ func show_screen(state: ScreenState):
 		ScreenState.BATTLE:
 			battle_screen.show()
 
-		ScreenState.DISCONNECTED:
-			disconnected_screen.show()
+		ScreenState.SERVER_DISCONNECTED:
+			server_disconnected.show()
+
+		ScreenState.PLAYER_DISCONNECTED:
+			player_disconnected.show()
+
+		ScreenState.PLAYER_WIN:
+			playerWin_screen.show()
+
+		ScreenState.PLAYER_LOSE:
+			playerLose_screen.show()
+
+		ScreenState.SERVER_FULL:
+			server_full_screen.show()
 
 func draw_ship_list():
 	# clear old UI
@@ -373,3 +402,10 @@ func draw_ship_list():
 			row.modulate = Color(0.5, 0.5, 0.5)
 
 		ships_list.add_child(row)
+
+func _on_exit_button_pressed():
+	get_tree().quit()
+
+
+func _on_reconnect_button_pressed():
+	network.connect_to_server()

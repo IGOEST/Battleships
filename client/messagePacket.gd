@@ -15,7 +15,9 @@ enum MsgType {
 	PLACE_REQUEST = 10,
 	PLACE_CONFIRM = 11,
 	PLACE_REJECT = 12,
-	TURN_CHANGE = 13
+	TURN_CHANGE = 13,
+	PLAYER_DISCONNECT = 14,
+	SERVER_FULL = 15
 }
 
 #BOARD
@@ -101,6 +103,16 @@ static func make_turn_change(next_turn: int) -> Dictionary:
 	return {
 		"type": MsgType.TURN_CHANGE,
 		"next_turn": next_turn,
+	}
+
+static func make_player_disconnect() -> Dictionary:
+	return {
+		"type": MsgType.PLAYER_DISCONNECT
+	}
+
+static func make_server_full() -> Dictionary:
+	return {
+		"type": MsgType.SERVER_FULL
 	}
 
 static func writeMsg(packet: Dictionary) -> String:
