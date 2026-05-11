@@ -17,7 +17,8 @@ enum MsgType {
 	PLACE_REJECT = 12,
 	TURN_CHANGE = 13,
 	PLAYER_DISCONNECT = 14,
-	SERVER_FULL = 15
+	SERVER_FULL = 15,
+	CLEAR_BOARD = 16
 }
 
 #BOARD
@@ -113,6 +114,11 @@ static func make_player_disconnect() -> Dictionary:
 static func make_server_full() -> Dictionary:
 	return {
 		"type": MsgType.SERVER_FULL
+	}
+
+static func make_clear_board() -> Dictionary:
+	return {
+		"type": MsgType.CLEAR_BOARD
 	}
 
 static func writeMsg(packet: Dictionary) -> String:

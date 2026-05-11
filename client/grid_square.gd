@@ -16,4 +16,4 @@ func mark_as_sunk():
 
 func mark_as_water():
 	ship_id = -1
-	modulate = Color("89cff0") # resetting if necessary
+	self_modulate = Color.WHITE # resetting if necessary

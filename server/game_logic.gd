@@ -126,7 +126,11 @@ func process_message(client, message: Dictionary, pid: int) -> Array:
 						"p2_name": player_names[2] 
 					}
 				})
-				
+		
+		Msg.MsgType.CLEAR_BOARD:
+			clear_player_placements(pid)
+			responses.append({"client": client, "packet": Msg.make_clear_board()})
+			
 	return responses
 	
 func is_placement_valid(pid, coords_array):
@@ -180,6 +184,12 @@ func vector_array_to_packet(arr: Array) -> Array:
 	
 	return out
 
+func clear_player_placements(pid):
+	if server_grids.has(pid):
+		server_grids[pid].clear()
+	if ships_data.has(pid):
+		ships_data[pid].clear()
+
 func clear_player_data(pid):
 	if server_grids.has(pid):
 		server_grids.erase(pid)
@@ -191,13 +201,3 @@ func clear_player_data(pid):
 		player_boards.erase(pid)
 	if player_names.has(pid):
 		player_names.erase(pid)
-
-func reset_game():
-	server_grids.clear()
-	ships_data.clear()
-	ship_cells.clear()
-	player_boards.clear()
-	player_names.clear()
-	game_started = false
-	game_over = false
-	current_turn = 1

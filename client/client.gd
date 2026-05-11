@@ -124,7 +124,6 @@ func _network_thread() -> void:
  
 	print("CLIENT: Network thread exit")
 
-
 func handle_server_message(packet: Dictionary):
 	print("CLIENT: Received from server: ", packet)
 	
@@ -171,46 +170,15 @@ func handle_server_message(packet: Dictionary):
 			print("CLIENT: Game over! Winner: player %d" % packet["winner_id"])
 			get_parent().handle_game_over(packet)
 
+		Msg.MsgType.CLEAR_BOARD:
+			get_parent().handle_clear_board()
+
 		Msg.MsgType.SERVER_FULL:
 			print("CLIENT: Server is full")
 			get_parent().handle_server_full()
  
 		_:
 			print("CLIENT: Unhandled packet type: ", msg_type)
-
-
-#func send_call_function(data: String):
-	#if not connected:
-		#print("CLIENT: Not connected to server")
-		#return
-	#
-	#var message = "CALL_FUNCTION " + data + "\n"
-	#print("CLIENT: Sending to server (", message.length(), " bytes): '", message, "'")
-	#var result = client.put_data(message.to_utf8_buffer())
-	#print("CLIENT: Sent result: ", result)
-
-
-#func request_server_info():
-	#if not connected:
-		#print("CLIENT: Not connected to server")
-		#return
-	#
-	#var message = "REQUEST_INFO\n"
-	#print("CLIENT: Sending to server (", message.length(), " bytes): '", message, "'")
-	#var result = client.put_data(message.to_utf8_buffer())
-	#print("CLIENT: Sent result: ", result)
-
-
-#func on_function_result(result: String):
-	#print("CLIENT: Processing function result: ", result)
-
-
-#func on_server_info(info: Dictionary):
-	#print("CLIENT: Processing servr info:")
-	#print(" CLIENT: Server time: ", info.get("server_time", 0))
-	#print(" CLIENT: Connected clients: ", info.get("connected_clients", 0))
-	#print(" CLIENT: Status: ", info.get("status", "unknown"))
-
 
 func send_fire(x: int, y: int):
 	if not connected:
@@ -220,7 +188,6 @@ func send_fire(x: int, y: int):
 	out_mutex.unlock()
 	print("CLIENT: Queued FIRE at [%d,%d]" % [x, y])
 
-
 func send_board(ships: Array):
 	if not connected:
 		return
@@ -229,13 +196,11 @@ func send_board(ships: Array):
 	out_mutex.unlock()
 	print("CLIENT: Queued BOARD_SUBMIT (%d ships)" % ships.size())
 
-
 func is_running() -> bool:
 	running_mutex.lock()
 	var r := running
 	running_mutex.unlock()
 	return r
-
 
 func _exit_tree() -> void:
 	running_mutex.lock()

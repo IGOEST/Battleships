@@ -29,7 +29,6 @@ func _ready() -> void:
 	game_thread = Thread.new()
 	game_thread.start(Callable(self, "_game_logic_thread"))
 
-
 func _process(delta: float) -> void:
 	if server.is_connection_available():
 		var client := server.take_connection()
@@ -109,7 +108,6 @@ func _client_thread(client):
 		OS.delay_msec(10)
  
 	print("SERVER: Client thread exit")
-	var disconnected_pid = pid
 	var remaining_clients = []
 	mutex.lock()
 	for c in clients:
@@ -117,17 +115,9 @@ func _client_thread(client):
 			remaining_clients.append(c)
 	mutex.unlock()
 	for remaining_client in remaining_clients:
-		send_packet(
-			remaining_client,
-			Msg.make_player_disconnect()
-		)
-	#mutex.lock()
-	#client_buffers.erase(client)
-	#clients.erase(client)
-	#_player_ids.erase(client)
-	#mutex.unlock()
-	clear_on_client_disconnect(client, _player_ids.get(client, -1))
+		send_packet(remaining_client, Msg.make_player_disconnect())
 
+	clear_on_client_disconnect(client, _player_ids.get(client, -1))
 
 func handle_client_message(client: StreamPeerTCP, message: String) -> void:
 	print("SERVER: CLIENT THREAD - Received from client: ", message)
@@ -145,7 +135,6 @@ func handle_client_message(client: StreamPeerTCP, message: String) -> void:
 	})
 	mutex.unlock()
 	semaphore.post()
-
 
 func _game_logic_thread():
 	print("SERVER: Game logic thread started")
@@ -180,30 +169,6 @@ func _game_logic_thread():
 			print("SERVER: Received action result: ", r["packet"])
 		mutex.unlock()
 
-
-#func call_server_function(client: StreamPeerTCP, data: String):
-	#print("SERVER: Server function called with data: ", data)
-	#var result = "Server processed: " + data.to_upper()
-	#send_to_client(client, "FUNCTION_RESULT " + result)
-
-
-#func send_info_to_client(client: StreamPeerTCP):
-	#var info = {
-		#"server_time": Time.get_ticks_msec(),
-		#"connected_clients": clients.size(),
-		#"status": "running"
-	#}
-	#
-	#var json_string = JSON.stringify(info)
-	#send_to_client(client, "INFO " + json_string)
-
-
-#func send_to_client(client: StreamPeerTCP, message: String):
-	#var full_message = message + "\n"
-	#print("SERVER: Sending to client: ", full_message)
-	#var result = client.put_data(full_message.to_utf8_buffer())
-	#print("SERVER: Sent result: ", result)
-
 func clear_on_client_disconnect(client: StreamPeerTCP, pid: int) -> void:
 	mutex.lock()
 	client_buffers.erase(client)
@@ -227,7 +192,6 @@ func send_packet(client: StreamPeerTCP, packet: Dictionary) -> void:
 	if err != OK:
 		push_warning("SERVER: error %d" % err)
  
-
 func _exit_tree() -> void:
 	for client in clients:
 		client.disconnect_from_host()

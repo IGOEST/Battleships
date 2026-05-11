@@ -34,6 +34,8 @@ const Msg = preload("res://messagePacket.gd")
 
 @onready var disconnect_exit_button = $PlayerDisconnected/ExitButton
 
+@onready var clear_board = $SetupPhase/MainLayout/SidebarPanel/SidebarStack/ClearBoard
+
 # data connected with placing ships
 var grid_data = {} # dictonary with key-(x, y) and value-ship_id or nulll
 var ships_to_place = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1] # ship sizes
@@ -256,12 +258,16 @@ func handle_fire_result(packet):
 	var outcome = packet["outcome"]
 	var btn = battle_grid_opponent.get_child(y * 10 + x)
 	
-	if outcome == "hit":
-		btn.modulate = Color.DARK_RED
-		btn.text = "X"
-	else:
-		btn.modulate = Color.WHITE
-		btn.text = "0"
+	match outcome:
+		"hit":
+			btn.self_modulate = Color.RED
+			btn.text = "X"
+		"sunk":
+			btn.self_modulate = Color.RED
+			btn.text = "S"
+		"miss":
+			btn.self_modulate = Color.WHITE
+			btn.text = "0"
 	
 	#my_turn = false
 	#update_turn_ui()
@@ -271,7 +277,18 @@ func handle_incoming_hit(packet):
 	var y = packet["y"]
 	var outcome = packet["outcome"]
 	var btn = battle_grid_player.get_child(y * 10 + x)
-	btn.text = "X"
+	#btn.text = "X"
+	
+	match outcome:
+		"hit":
+			btn.self_modulate = Color.RED
+			btn.text = "X"
+		"sunk":
+			btn.self_modulate = Color.RED
+			btn.text = "S"
+		"miss":
+			btn.self_modulate = Color.WHITE
+			btn.text = "0"
 	
 	#my_turn = true
 	#update_turn_ui()
@@ -403,9 +420,22 @@ func draw_ship_list():
 
 		ships_list.add_child(row)
 
+func handle_clear_board():
+	grid_data.clear()
+	current_ship_index = 0
+	update_placement_label()
+	update_ship_preview()
+	draw_ship_list()
+	for btn in grid_container.get_children():
+		btn.mark_as_water()
+		btn.text = ""
+	clear_board.disabled = false
+
 func _on_exit_button_pressed():
 	get_tree().quit()
 
-
-func _on_reconnect_button_pressed():
-	network.connect_to_server()
+func _on_clear_board_pressed() -> void:
+	network.out_mutex.lock()
+	network.out_queue.append(Msg.make_clear_board())
+	network.out_mutex.unlock()
+	clear_board.disabled = true

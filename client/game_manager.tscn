@@ -295,7 +295,6 @@ placeholder_text = "ENTER USERNAME: "
 alignment = 1
 
 [node name="SetupPhase" type="Control" parent="." unique_id=229700927]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -332,6 +331,10 @@ visible = false
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_8jrwq")
 text = "PLACE SHIPS (FOR TESTING)"
+
+[node name="ClearBoard" type="Button" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=688955238]
+layout_mode = 2
+text = "Clear Board"
 
 [node name="ship_label" type="Label" parent="SetupPhase/MainLayout/SidebarPanel/SidebarStack" unique_id=1539001379]
 layout_mode = 2
@@ -609,6 +612,7 @@ horizontal_alignment = 1
 [connection signal="pressed" from="StartScreen/StartNodes/start_button" to="." method="_on_start_button_pressed"]
 [connection signal="text_changed" from="StartScreen/StartNodes/username_input" to="." method="_on_username_input_text_changed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/AutoPlaceButton" to="." method="_on_auto_place_button_pressed"]
+[connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ClearBoard" to="." method="_on_clear_board_pressed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/rotate_button" to="." method="_on_rotate_button_pressed"]
 [connection signal="pressed" from="SetupPhase/MainLayout/SidebarPanel/SidebarStack/ready_button" to="." method="_on_ready_button_pressed"]
 
